@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Schultool - Pomodoro & Notenrechner</title>
+    <meta name="description" content="Pomodoro Timer mit Statistik und Notenrechner für Schüler">
+    <meta name="theme-color" content="#4F46E5">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="icon-192.svg">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 PWA Schultool</h1>
+            <nav>
+                <button class="nav-btn active" data-tab="pomodoro">🍅 Pomodoro</button>
+                <button class="nav-btn" data-tab="noten">📊 Noten</button>
+                <button class="nav-btn" data-tab="stundenplan">📅 Stundenplan</button>
+                <button class="nav-btn" data-tab="hausaufgaben">📝 Hausaufgaben</button>
+            </nav>
+        </header>
+
+        <!-- Pomodoro Timer Section -->
+        <section id="pomodoro" class="tab-content active">
+            <div class="timer-display">
+                <div class="time" id="timer">25:00</div>
+                <div class="session-type" id="sessionType">Arbeitszeit</div>
+            </div>
+
+            <div class="timer-controls">
+                <button id="startBtn" class="btn btn-primary">▶ Start</button>
+                <button id="pauseBtn" class="btn btn-secondary">⏸ Pause</button>
+                <button id="resetBtn" class="btn btn-danger">↺ Reset</button>
+            </div>
+
+            <div class="timer-settings">
+                <div class="setting">
+                    <label>Arbeitszeit (min):</label>
+                    <input type="number" id="workTime" value="25" min="1" max="60">
+                </div>
+                <div class="setting">
+                    <label>Pause (min):</label>
+                    <input type="number" id="breakTime" value="5" min="1" max="30">
+                </div>
+            </div>
+
+            <div class="statistics">
+                <h2>📈 Statistik</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalSessions">0</div>
+                        <div class="stat-label">Gesamte Sitzungen</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalMinutes">0</div>
+                        <div class="stat-label">Gesamte Minuten</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="todaySessions">0</div>
+                        <div class="stat-label">Heute</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="streak">0</div>
+                        <div class="stat-label">Tage Serie</div>
+                    </div>
+                </div>
+                <button id="resetStats" class="btn btn-danger btn-small">Statistik zurücksetzen</button>
+            </div>
+        </section>
+
+        <!-- Grade Calculator Section -->
+        <section id="noten" class="tab-content">
+            <div class="grade-calculator">
+                <h2>📊 Notenrechner</h2>
+                
+                <div class="grade-inputs">
+                    <div class="input-group">
+                        <label>Fach:</label>
+                        <input type="text" id="subject" placeholder="z.B. Mathe">
+                    </div>
+                    <div class="input-group">
+                        <label>Note:</label>
+                        <input type="number" id="grade" placeholder="1-6" min="1" max="6" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Gewichtung (%):</label>
+                        <input type="number" id="weight" placeholder="100" min="1" max="200" value="100">
+                    </div>
+                    <button id="addGrade" class="btn btn-primary">+ Hinzufügen</button>
+                </div>
+
+                <div class="grade-list">
+                    <h3>Notenliste</h3>
+                    <ul id="gradeList"></ul>
+                </div>
+
+                <div class="grade-result">
+                    <div class="result-card">
+                        <div class="result-label">Durchschnitt:</div>
+                        <div class="result-value" id="average">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Anzahl Noten:</div>
+                        <div class="result-value" id="gradeCount">0</div>
+                    </div>
+                </div>
+
+                <button id="clearGrades" class="btn btn-danger btn-small">Alle Noten löschen</button>
+            </div>
+        </section>
+
+        <!-- Stundenplan Section -->
+        <section id="stundenplan" class="tab-content">
+            <div class="stundenplan-container">
+                <h2>📅 Stundenplan</h2>
+                
+                <div class="week-selector">
+                    <button class="day-btn" data-day="montag">Montag</button>
+                    <button class="day-btn" data-day="dienstag">Dienstag</button>
+                    <button class="day-btn" data-day="mittwoch">Mittwoch</button>
+                    <button class="day-btn" data-day="donnerstag">Donnerstag</button>
+                    <button class="day-btn" data-day="freitag">Freitag</button>
+                </div>
+
+                <div class="add-class">
+                    <div class="input-group">
+                        <label>Fach:</label>
+                        <input type="text" id="classSubject" placeholder="z.B. Mathe">
+                    </div>
+                    <div class="input-group">
+                        <label>Uhrzeit:</label>
+                        <input type="time" id="classTime">
+                    </div>
+                    <div class="input-group">
+                        <label>Raum:</label>
+                        <input type="text" id="classRoom" placeholder="z.B. A101">
+                    </div>
+                    <button id="addClass" class="btn btn-primary">+ Stunde hinzufügen</button>
+                </div>
+
+                <div class="class-list">
+                    <h3 id="selectedDayTitle">Montag</h3>
+                    <ul id="classList"></ul>
+                </div>
+
+                <button id="clearSchedule" class="btn btn-danger btn-small">Stundenplan löschen</button>
+            </div>
+        </section>
+
+        <!-- Hausaufgaben Section -->
+        <section id="hausaufgaben" class="tab-content">
+            <div class="homework-container">
+                <h2>📝 Hausaufgaben</h2>
+                
+                <div class="add-homework">
+                    <div class="input-group">
+                        <label>Aufgabe:</label>
+                        <input type="text" id="homeworkTask" placeholder="z.B. Mathe Seite 45">
+                    </div>
+                    <div class="input-group">
+                        <label>Fach:</label>
+                        <input type="text" id="homeworkSubject" placeholder="z.B. Mathe">
+                    </div>
+                    <div class="input-group">
+                        <label>Fällig am:</label>
+                        <input type="date" id="homeworkDue">
+                    </div>
+                    <div class="input-group">
+                        <label>Priorität:</label>
+                        <select id="homeworkPriority">
+                            <option value="low">Niedrig</option>
+                            <option value="medium" selected>Mittel</option>
+                            <option value="high">Hoch</option>
+                        </select>
+                    </div>
+                    <button id="addHomework" class="btn btn-primary">+ Hausaufgabe hinzufügen</button>
+                </div>
+
+                <div class="homework-list">
+                    <h3>Offene Hausaufgaben</h3>
+                    <ul id="homeworkList"></ul>
+                </div>
+
+                <div class="homework-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="pendingHomework">0</div>
+                        <div class="stat-label">Offen</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="completedHomework">0</div>
+                        <div class="stat-label">Erledigt</div>
+                    </div>
+                </div>
+
+                <button id="clearHomework" class="btn btn-danger btn-small">Alle Hausaufgaben löschen</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
